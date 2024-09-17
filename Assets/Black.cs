@@ -93,7 +93,6 @@ public class BlackjackGame : MonoBehaviour
         foreach (Sprite sprite in loadedSprites)
         {
             cardSprites[sprite.name] = sprite;
-            // Debug.Log($"Loaded sprite: {sprite.name}");
         }
 
         if (cardSprites.Count == 0)
@@ -101,14 +100,7 @@ public class BlackjackGame : MonoBehaviour
             Debug.LogError("No sprites were loaded. Check that your images are in Assets/Resources/CardImages and are set as Sprites in Unity.");
         }
 
-        if (!cardSprites.ContainsKey("BACK-G"))
-        {
-            Debug.LogError("Card back sprite not found. Ensure you have a sprite named 'BACK' in your CardImages folder.");
-        }
-        else
-        {
-            cardBackSprite = cardSprites["BACK-G"];
-        }
+        cardBackSprite = cardSprites["BACK-T"];
     }
 
     private void CreateDeck()

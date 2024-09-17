@@ -76,7 +76,7 @@ public class BlackjackUIManager : MonoBehaviour
 
     private void SetupCardBackSelection()
     {   
-        
+
         UpdateCardBackSelection();
     }
 
@@ -85,6 +85,7 @@ public class BlackjackUIManager : MonoBehaviour
         selectedCardBackIndex = index;
         UpdateCardBackSelection();
         blackjackGame.SetCardBackSprite(cardBackSprites[selectedCardBackIndex]);
+
     }
 
     private void UpdateCardBackSelection()
