@@ -53,7 +53,7 @@ public class BlackjackUIManager : MonoBehaviour
         SetupButtonListeners();
         ShowMainMenu();
         SetupRulesText();
-        SetupCardBackSelection();
+        SelectCardBack(1);
     }
 
     private void SetupButtonListeners()
@@ -67,32 +67,26 @@ public class BlackjackUIManager : MonoBehaviour
         cardBackCloseButton.onClick.AddListener(CloseCardBackPanel);
         rulesCloseButton.onClick.AddListener(CloseRulesPanel);
 
-        for (int i = 0; i < cardBackButtons.Length; i++)
-        {
-            int index = i;
-            cardBackButtons[i].onClick.AddListener(() => SelectCardBack(index));
-        }
     }
 
-    private void SetupCardBackSelection()
-    {   
-
-        UpdateCardBackSelection();
-    }
-
-    private void SelectCardBack(int index)
+    public void SelectCardBack(int index)
     {
         selectedCardBackIndex = index;
+        Debug.Log("Selected card back: " + selectedCardBackIndex);
         UpdateCardBackSelection();
         blackjackGame.SetCardBackSprite(cardBackSprites[selectedCardBackIndex]);
+        
+    }
 
+    public void TestButtonClick(int index){
+        Debug.Log("Button clicked: " + index);
     }
 
     private void UpdateCardBackSelection()
     {
         for (int i = 0; i < cardBackButtons.Length; i++)
         {
-            cardBackButtons[i].interactable = (i != selectedCardBackIndex);
+            cardBackButtons[i].interactable = i != selectedCardBackIndex;
         }
     }
 

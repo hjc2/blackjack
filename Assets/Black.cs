@@ -78,6 +78,7 @@ public class BlackjackGame : MonoBehaviour
         CreateDeck();
         ShuffleDeck();
         DealInitialCards();
+        SetCardBackSprite(cardBackSprite);
     }
 
         public void SetCardBackSprite(Sprite newCardBackSprite)
