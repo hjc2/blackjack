@@ -4,119 +4,133 @@ using UnityEngine.UI;
 
 public class BlackjackUIManager : MonoBehaviour
 {
+    [Header("Panels")]
+    public GameObject mainMenuPanel;
+    public GameObject gamePanel;
+    public GameObject cardBackPanel;
+    public GameObject rulesPanel;
+
     [Header("Main Menu")]
-    public Canvas mainMenuCanvas;
     public Button startGameButton;
     public Button chooseCardBackButton;
     public Button rulesButton;
 
+    [Header("Game Panel")]
+    public TextMeshProUGUI playerHandText;
+    public TextMeshProUGUI dealerHandText;
+    public Button hitButton;
+    public Button standButton;
+    public TextMeshProUGUI gameResultText;
+    public Button returnToMenuButton;
+
     [Header("Card Back Selection")]
-    public GameObject cardBackPanel;
     public Button[] cardBackButtons;
     public Button cardBackCloseButton;
 
     [Header("Rules Panel")]
-    public GameObject rulesPanel;
-    public Button rulesCloseButton;
     public TextMeshProUGUI rulesText;
+    public Button rulesCloseButton;
 
-    [Header("Button Text")]
-    public TextMeshProUGUI startGameButtonText;
-    public TextMeshProUGUI chooseCardBackButtonText;
-    public TextMeshProUGUI rulesButtonText;
-    public TextMeshProUGUI cardBackCloseButtonText;
-    public TextMeshProUGUI rulesCloseButtonText;
+    private BlackjackGame blackjackGame;
 
     private void Start()
     {
+        blackjackGame = GetComponent<BlackjackGame>();
+
         // Set up button listeners
-        SetupButton(startGameButton, StartGame, "Start Game Button");
-        SetupButton(chooseCardBackButton, OpenCardBackPanel, "Choose Card Back Button");
-        SetupButton(rulesButton, OpenRulesPanel, "Rules Button");
-        SetupButton(cardBackCloseButton, CloseCardBackPanel, "Card Back Close Button");
-        SetupButton(rulesCloseButton, CloseRulesPanel, "Rules Close Button");
+        startGameButton.onClick.AddListener(StartGame);
+        chooseCardBackButton.onClick.AddListener(OpenCardBackPanel);
+        rulesButton.onClick.AddListener(OpenRulesPanel);
+        hitButton.onClick.AddListener(OnHitButtonClicked);
+        standButton.onClick.AddListener(OnStandButtonClicked);
+        returnToMenuButton.onClick.AddListener(ReturnToMainMenu);
+        cardBackCloseButton.onClick.AddListener(CloseCardBackPanel);
+        rulesCloseButton.onClick.AddListener(CloseRulesPanel);
 
-        // Initially hide panels
-        SetActiveWithNull(cardBackPanel, false, "Card Back Panel");
-        SetActiveWithNull(rulesPanel, false, "Rules Panel");
-
-        // Set up button text
-        SetTextWithNull(startGameButtonText, "Start Game", "Start Game Button Text");
-        SetTextWithNull(chooseCardBackButtonText, "Choose Card Back", "Choose Card Back Button Text");
-        SetTextWithNull(rulesButtonText, "Rules", "Rules Button Text");
-        SetTextWithNull(cardBackCloseButtonText, "Close", "Card Back Close Button Text");
-        SetTextWithNull(rulesCloseButtonText, "Close", "Rules Close Button Text");
+        // Initially show only the main menu
+        ShowPanel(mainMenuPanel);
+        HidePanel(gamePanel);
+        HidePanel(cardBackPanel);
+        HidePanel(rulesPanel);
 
         // Set up rules text
-        SetTextWithNull(rulesText, "Blackjack Rules:\n\n" +
+        rulesText.text = "Blackjack Rules:\n\n" +
             "1. The goal is to get as close to 21 points as possible without going over.\n" +
             "2. Face cards are worth 10, Aces are 1 or 11, other cards are face value.\n" +
             "3. Click 'Hit' to draw another card, or 'Stay' to keep your current hand.\n" +
             "4. If you go over 21, you 'bust' and lose.\n" +
             "5. After you stay, the dealer plays. They must hit on 16 and stay on 17.\n" +
-            "6. Closest to 21 without busting wins!", "Rules Text");
-    }
-
-    private void SetupButton(Button button, UnityEngine.Events.UnityAction action, string buttonName)
-    {
-        if (button != null)
-        {
-            button.onClick.AddListener(action);
-        }
-        else
-        {
-            Debug.LogError($"{buttonName} is not assigned in the Inspector.");
-        }
-    }
-
-    private void SetActiveWithNull(GameObject obj, bool active, string objectName)
-    {
-        if (obj != null)
-        {
-            obj.SetActive(active);
-        }
-        else
-        {
-            Debug.LogError($"{objectName} is not assigned in the Inspector.");
-        }
-    }
-
-    private void SetTextWithNull(TextMeshProUGUI textComponent, string text, string componentName)
-    {
-        if (textComponent != null)
-        {
-            textComponent.text = text;
-        }
-        else
-        {
-            Debug.LogError($"{componentName} is not assigned in the Inspector.");
-        }
+            "6. Closest to 21 without busting wins!";
     }
 
     private void StartGame()
     {
-        Debug.Log("Starting the game");
+        ShowPanel(gamePanel);
+        HidePanel(mainMenuPanel);
+        blackjackGame.StartNewGame();
+        UpdateGameUI();
+    }
+
+    private void OnHitButtonClicked()
+    {
+        blackjackGame.PlayerHit();
+        UpdateGameUI();
+    }
+
+    private void OnStandButtonClicked()
+    {
+        blackjackGame.PlayerStand();
+        UpdateGameUI();
+    }
+
+    private void ReturnToMainMenu()
+    {
+        ShowPanel(mainMenuPanel);
+        HidePanel(gamePanel);
     }
 
     private void OpenCardBackPanel()
     {
-        SetActiveWithNull(cardBackPanel, true, "Card Back Panel");
+        ShowPanel(cardBackPanel);
+        HidePanel(mainMenuPanel);
     }
 
     private void CloseCardBackPanel()
     {
-        SetActiveWithNull(cardBackPanel, false, "Card Back Panel");
+        ShowPanel(mainMenuPanel);
+        HidePanel(cardBackPanel);
     }
 
     private void OpenRulesPanel()
     {
-        SetActiveWithNull(rulesPanel, true, "Rules Panel");
+        ShowPanel(rulesPanel);
+        HidePanel(mainMenuPanel);
     }
 
     private void CloseRulesPanel()
     {
-        SetActiveWithNull(rulesPanel, false, "Rules Panel");
+        ShowPanel(mainMenuPanel);
+        HidePanel(rulesPanel);
     }
 
-    // TODO: Implement method to handle card back selection
+    private void UpdateGameUI()
+    {
+        playerHandText.text = "Player Hand: " + blackjackGame.GetPlayerHandAsString();
+        dealerHandText.text = "Dealer Hand: " + blackjackGame.GetDealerHandAsString();
+        gameResultText.text = blackjackGame.GetGameResult();
+
+        // Enable/disable hit and stand buttons based on game state
+        hitButton.interactable = blackjackGame.CanPlayerHit();
+        standButton.interactable = blackjackGame.CanPlayerStand();
+    }
+
+    private void ShowPanel(GameObject panel)
+    {
+        panel.SetActive(true);
+    }
+
+    private void HidePanel(GameObject panel)
+    {
+        panel.SetActive(false);
+    }
 }
