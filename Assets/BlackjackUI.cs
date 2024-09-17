@@ -30,7 +30,6 @@ public class BlackjackUIManager : MonoBehaviour
 
     [Header("Card Back Selection")]
     public Sprite[] cardBackSprites;
-    public Image[] cardBackPreviewImages;
 
     public Button[] cardBackButtons;
     public Button cardBackCloseButton;
@@ -76,19 +75,8 @@ public class BlackjackUIManager : MonoBehaviour
     }
 
     private void SetupCardBackSelection()
-    {
-        for (int i = 0; i < cardBackPreviewImages.Length; i++)
-        {
-            if (i < cardBackSprites.Length)
-            {
-                cardBackPreviewImages[i].sprite = cardBackSprites[i];
-                cardBackPreviewImages[i].gameObject.SetActive(true);
-            }
-            else
-            {
-                cardBackPreviewImages[i].gameObject.SetActive(false);
-            }
-        }
+    {   
+        
         UpdateCardBackSelection();
     }
 
