@@ -25,6 +25,7 @@ public class BlackjackUIManager : MonoBehaviour
     public Transform dealerHandArea;
     public Button hitButton;
     public Button standButton;
+    public Button restartButton;
     public TextMeshProUGUI gameResultText;
     public Button returnToMenuButton;
 
@@ -74,7 +75,6 @@ public class BlackjackUIManager : MonoBehaviour
         returnToMenuButton.onClick.AddListener(ReturnToMainMenu);
         cardBackCloseButton.onClick.AddListener(CloseCardBackPanel);
         rulesCloseButton.onClick.AddListener(CloseRulesPanel);
-
     }
 
     public void SelectCardBack(int index)
@@ -117,11 +117,18 @@ public class BlackjackUIManager : MonoBehaviour
             "6. Closest to 21 without busting wins!";
     }
 
+    public void RestartGame()
+    {
+        StartCoroutine(AnimateAllCardsOffScreen());
+
+
+    }
     private void StartGame()
     {
         ShowPanel(gamePanel);
         HidePanel(mainMenuPanel);
         ClearCards();
+        restartButton.interactable = false;
         bool gameOverImmediately = blackjackGame.StartNewGame();
         UpdateGameUI();
         if (gameOverImmediately)
@@ -262,8 +269,7 @@ public class BlackjackUIManager : MonoBehaviour
     {
         hitButton.interactable = false;
         standButton.interactable = false;
-        StartCoroutine(AnimateAllCardsOffScreen());
-
+        restartButton.interactable = true;
         returnToMenuButton.gameObject.SetActive(true);
     }
 
@@ -288,7 +294,16 @@ public class BlackjackUIManager : MonoBehaviour
         Debug.Log("Dealer animation completed");
 
         ClearCards();
-        // ShowMainMenu();
+
+        restartButton.interactable = false;
+        
+        ClearCards();
+        bool gameOverImmediately = blackjackGame.StartNewGame();
+        UpdateGameUI();
+        if (gameOverImmediately)
+        {
+            EndGame();
+        }
     }
 
 
