@@ -694,6 +694,7 @@ MonoBehaviour:
   restartButton: {fileID: 395648044}
   gameResultText: {fileID: 1637284678}
   returnToMenuButton: {fileID: 279912732}
+  cardStack: {fileID: 1769177067}
   cardBackSprites:
   - {fileID: 21300000, guid: 3ab82fc42f82b5f4da1353ee7953d4ba, type: 3}
   - {fileID: 21300000, guid: 7f2eb95212c5c134fa5b9da496473aaf, type: 3}
@@ -738,6 +739,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  playerMoney: 100
+  playerMoneyText: {fileID: 0}
+  playerBet: 0
+  playerBetText: {fileID: 0}
+  betMaxButton: {fileID: 0}
+  betIncreaseButton: {fileID: 0}
+  betDecreaseButton: {fileID: 0}
 --- !u!4 &141584100
 Transform:
   m_ObjectHideFlags: 0
@@ -4568,7 +4576,7 @@ GameObject:
   - component: {fileID: 1769177070}
   - component: {fileID: 1769177069}
   m_Layer: 5
-  m_Name: Card Copy
+  m_Name: card stack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -28,6 +28,7 @@ public class BlackjackUIManager : MonoBehaviour
     public Button restartButton;
     public TextMeshProUGUI gameResultText;
     public Button returnToMenuButton;
+    public GameObject cardStack; 
 
     [Header("Card Back Selection")]
     public Sprite[] cardBackSprites;
@@ -55,9 +56,22 @@ public class BlackjackUIManager : MonoBehaviour
 
     public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);  // Add this line
 
+    [Header("BETTING")]
+
+    public int playerMoney = 100;
+    public TextMeshProUGUI playerMoneyText;
+    public int playerBet = 0;
+    public TextMeshProUGUI playerBetText;
+    public Button betMaxButton;
+    public Button betIncreaseButton;
+    public Button betDecreaseButton;
+    
+
+
     private void Start()
     {
         blackjackGame = GetComponent<BlackjackGame>();
+        cardStack.GetComponent<Image>().sprite = cardBackSprites[selectedCardBackIndex];
 
         SetupButtonListeners();
         ShowMainMenu();
@@ -83,7 +97,7 @@ public class BlackjackUIManager : MonoBehaviour
         Debug.Log("Selected card back: " + selectedCardBackIndex);
         UpdateCardBackSelection();
         blackjackGame.SetCardBackSprite(cardBackSprites[selectedCardBackIndex]);
-        
+        cardStack.GetComponent<Image>().sprite = cardBackSprites[selectedCardBackIndex];
     }
 
     public void TestButtonClick(int index){
