@@ -29,11 +29,26 @@ public class BlackjackGame : MonoBehaviour
     private string gameResult;
     private bool gameOver;
 
-    public void StartNewGame()
+    public bool StartNewGame()
     {
         InitializeGame();
         gameOver = false;
         gameResult = "";
+        
+        // Check for initial blackjack
+        if(CalculateHandValue(playerHand) == 21 && CalculateHandValue(dealerHand) == 21){
+            gameResult = "Both players have blackjack! It's a push.";
+            gameOver = true;
+        }
+        else if(CalculateHandValue(playerHand) == 21){
+            gameResult = "Player blackjack! Player wins.";
+            gameOver = true;
+        } else if(CalculateHandValue(dealerHand) == 21){
+            gameResult = "Dealer blackjack! Dealer wins.";
+            gameOver = true;
+        }
+
+        return gameOver;
     }
 
     private void InitializeGame()
@@ -91,6 +106,24 @@ public class BlackjackGame : MonoBehaviour
         dealerHand.Add(DrawCard());
         playerHand.Add(DrawCard());
         dealerHand.Add(DrawCard());
+
+        playerHand.Add(new Card(CardSuit.Hearts, CardValue.Ace));
+        playerHand.Add(new Card(CardSuit.Hearts, CardValue.Ten));
+
+        Debug.Log(CalculateHandValue(playerHand));
+
+
+        if(CalculateHandValue(playerHand) == 21 && CalculateHandValue(dealerHand) == 21){
+            gameResult = "Both players have blackjack! It's a push.";
+            gameOver = true;
+        }
+        else if(CalculateHandValue(playerHand) == 21){
+            gameResult = "Player blackjack! Player wins.";
+            gameOver = true;
+        } else if(CalculateHandValue(dealerHand) == 21){
+            gameResult = "Dealer blackjack! Dealer wins.";
+            gameOver = true;
+        }
     }
 
     public void PlayerHit()

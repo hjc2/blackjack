@@ -67,8 +67,14 @@ public class BlackjackUIManager : MonoBehaviour
     {
         ShowPanel(gamePanel);
         HidePanel(mainMenuPanel);
-        blackjackGame.StartNewGame();
+        bool gameOverImmediately = blackjackGame.StartNewGame();
         UpdateGameUI();
+        if (gameOverImmediately)
+        {
+            // Disable hit and stand buttons
+            hitButton.interactable = false;
+            standButton.interactable = false;
+        }
     }
 
     private void OnHitButtonClicked()
@@ -122,6 +128,16 @@ public class BlackjackUIManager : MonoBehaviour
         // Enable/disable hit and stand buttons based on game state
         hitButton.interactable = blackjackGame.CanPlayerHit();
         standButton.interactable = blackjackGame.CanPlayerStand();
+
+        // If the game is over, show the return to menu button
+        if (!hitButton.interactable && !standButton.interactable)
+        {
+            returnToMenuButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            returnToMenuButton.gameObject.SetActive(false);
+        }
     }
 
     private void ShowPanel(GameObject panel)
