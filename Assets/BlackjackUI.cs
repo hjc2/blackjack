@@ -16,6 +16,10 @@ public class BlackjackUIManager : MonoBehaviour
     public Button chooseCardBackButton;
     public Button rulesButton;
 
+    [Header("Card Layout")]
+    public float cardSpacing = 40f;
+    public float dealerCardOffset = 20f;
+
     [Header("Game Panel")]
     public Transform playerHandArea;
     public Transform dealerHandArea;
@@ -157,7 +161,8 @@ public class BlackjackUIManager : MonoBehaviour
 
     private void UpdateDealerHand()
     {
-        List<Sprite> dealerSprites = blackjackGame.GetDealerHandSprites();
+        bool revealHidden = !blackjackGame.CanPlayerHit() && !blackjackGame.CanPlayerStand();
+        List<Sprite> dealerSprites = blackjackGame.GetDealerHandSprites(revealHidden);
         UpdateHandDisplay(dealerHandArea, dealerCardObjects, dealerSprites);
     }
 
@@ -174,18 +179,35 @@ public class BlackjackUIManager : MonoBehaviour
         // Update existing card objects and add new ones if needed
         for (int i = 0; i < sprites.Count; i++)
         {
+            GameObject cardObject;
             if (i < cardObjects.Count)
             {
-                cardObjects[i].GetComponent<Image>().sprite = sprites[i];
+                cardObject = cardObjects[i];
             }
             else
             {
-                GameObject newCard = Instantiate(cardPrefab, area);
-                newCard.GetComponent<Image>().sprite = sprites[i];
-                cardObjects.Add(newCard);
+                cardObject = Instantiate(cardPrefab, area);
+                cardObjects.Add(cardObject);
             }
+
+            // Update sprite
+            cardObject.GetComponent<Image>().sprite = sprites[i];
+
+            // Position the card
+            RectTransform rectTransform = cardObject.GetComponent<RectTransform>();
+            float xPos = i * cardSpacing;
+            float yPos = 0;
+
+            // Apply offset to dealer's hidden card
+            if (area == dealerHandArea && i == 1 && !blackjackGame.CanPlayerHit())
+            {
+                yPos = dealerCardOffset;
+            }
+
+            rectTransform.anchoredPosition = new Vector2(xPos, yPos);
         }
     }
+
 
     private void ClearCards()
     {
