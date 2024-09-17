@@ -97,13 +97,13 @@ public class BlackjackGame : MonoBehaviour
             Debug.LogError("No sprites were loaded. Check that your images are in Assets/Resources/CardImages and are set as Sprites in Unity.");
         }
 
-        if (!cardSprites.ContainsKey("BACK-R"))
+        if (!cardSprites.ContainsKey("BACK-G"))
         {
             Debug.LogError("Card back sprite not found. Ensure you have a sprite named 'BACK' in your CardImages folder.");
         }
         else
         {
-            cardBackSprite = cardSprites["BACK-R"];
+            cardBackSprite = cardSprites["BACK-G"];
         }
     }
 
