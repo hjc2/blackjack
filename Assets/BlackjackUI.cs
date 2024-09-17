@@ -29,8 +29,12 @@ public class BlackjackUIManager : MonoBehaviour
     public Button returnToMenuButton;
 
     [Header("Card Back Selection")]
+    public Sprite[] cardBackSprites;
+    public Image[] cardBackPreviewImages;
+
     public Button[] cardBackButtons;
     public Button cardBackCloseButton;
+    private int selectedCardBackIndex = 0;
 
     [Header("Rules Panel")]
     public TextMeshProUGUI rulesText;
@@ -50,6 +54,7 @@ public class BlackjackUIManager : MonoBehaviour
         SetupButtonListeners();
         ShowMainMenu();
         SetupRulesText();
+        SetupCardBackSelection();
     }
 
     private void SetupButtonListeners()
@@ -62,6 +67,44 @@ public class BlackjackUIManager : MonoBehaviour
         returnToMenuButton.onClick.AddListener(ReturnToMainMenu);
         cardBackCloseButton.onClick.AddListener(CloseCardBackPanel);
         rulesCloseButton.onClick.AddListener(CloseRulesPanel);
+
+        for (int i = 0; i < cardBackButtons.Length; i++)
+        {
+            int index = i;
+            cardBackButtons[i].onClick.AddListener(() => SelectCardBack(index));
+        }
+    }
+
+    private void SetupCardBackSelection()
+    {
+        for (int i = 0; i < cardBackPreviewImages.Length; i++)
+        {
+            if (i < cardBackSprites.Length)
+            {
+                cardBackPreviewImages[i].sprite = cardBackSprites[i];
+                cardBackPreviewImages[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                cardBackPreviewImages[i].gameObject.SetActive(false);
+            }
+        }
+        UpdateCardBackSelection();
+    }
+
+    private void SelectCardBack(int index)
+    {
+        selectedCardBackIndex = index;
+        UpdateCardBackSelection();
+        blackjackGame.SetCardBackSprite(cardBackSprites[selectedCardBackIndex]);
+    }
+
+    private void UpdateCardBackSelection()
+    {
+        for (int i = 0; i < cardBackButtons.Length; i++)
+        {
+            cardBackButtons[i].interactable = (i != selectedCardBackIndex);
+        }
     }
 
     private void ShowMainMenu()

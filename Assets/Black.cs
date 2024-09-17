@@ -80,6 +80,10 @@ public class BlackjackGame : MonoBehaviour
         DealInitialCards();
     }
 
+        public void SetCardBackSprite(Sprite newCardBackSprite)
+    {
+        cardBackSprite = newCardBackSprite;
+    }
 
     private void LoadCardSprites()
     {
@@ -89,7 +93,7 @@ public class BlackjackGame : MonoBehaviour
         foreach (Sprite sprite in loadedSprites)
         {
             cardSprites[sprite.name] = sprite;
-            Debug.Log($"Loaded sprite: {sprite.name}");
+            // Debug.Log($"Loaded sprite: {sprite.name}");
         }
 
         if (cardSprites.Count == 0)
