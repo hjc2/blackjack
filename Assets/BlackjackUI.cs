@@ -46,6 +46,14 @@ public class BlackjackUIManager : MonoBehaviour
     private List<GameObject> playerCardObjects = new List<GameObject>();
     private List<GameObject> dealerCardObjects = new List<GameObject>();
 
+    [Header("Animation")]
+    public float animationDuration = 1f;
+    public float stackOffset = 5f;
+    public Vector2 playerOffScreenPosition = new Vector2(400, 20);
+    public Vector2 dealerOffScreenPosition = new Vector2(400, -20);
+
+    public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);  // Add this line
+
     private void Start()
     {
         blackjackGame = GetComponent<BlackjackGame>();
@@ -254,8 +262,11 @@ public class BlackjackUIManager : MonoBehaviour
     {
         hitButton.interactable = false;
         standButton.interactable = false;
+        StartCoroutine(AnimateAllCardsOffScreen());
+
         returnToMenuButton.gameObject.SetActive(true);
     }
+
 
     private void ShowPanel(GameObject panel)
     {
@@ -265,5 +276,63 @@ public class BlackjackUIManager : MonoBehaviour
     private void HidePanel(GameObject panel)
     {
         panel.SetActive(false);
+    }
+    private IEnumerator<Coroutine> AnimateAllCardsOffScreen()
+    {   
+
+        yield return StartCoroutine(AnimateCardsOffScreen(playerCardObjects, playerOffScreenPosition));
+        
+        Debug.Log("Player animation completed");
+
+        yield return StartCoroutine(AnimateCardsOffScreen(dealerCardObjects, dealerOffScreenPosition));
+        Debug.Log("Dealer animation completed");
+
+        ClearCards();
+        // ShowMainMenu();
+    }
+
+
+    private IEnumerator<Coroutine> AnimateCardsOffScreen(List<GameObject> cardObjects, Vector2 offScreenPosition)
+    {
+        List<RectTransform> cards = GetCardRectTransforms(cardObjects);
+        Vector2 stackPosition = offScreenPosition;
+        float elapsedTime = 0f;
+
+        // Store initial positions
+        Vector2[] startPositions = new Vector2[cards.Count];
+        Vector2[] endPositions = new Vector2[cards.Count];
+        for (int i = 0; i < cards.Count; i++)
+        {
+            startPositions[i] = cards[i].anchoredPosition;
+            endPositions[i] = stackPosition + new Vector2(i * stackOffset, 0f);
+        }
+
+        while (elapsedTime < animationDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / animationDuration);
+            float easedT = easeCurve.Evaluate(t);  // Use the ease curve
+
+            for (int i = 0; i < cards.Count; i++)
+            {
+                RectTransform card = cards[i];
+                card.anchoredPosition = Vector2.Lerp(startPositions[i], endPositions[i], easedT);
+            }
+            yield return null;
+        }
+
+        // Ensure all cards are at their final positions
+        for (int i = 0; i < cards.Count; i++)
+        {
+            cards[i].anchoredPosition = endPositions[i];
+        }
+
+        yield return null;
+    }
+
+
+    private List<RectTransform> GetCardRectTransforms(List<GameObject> cardObjects)
+    {
+        return cardObjects.ConvertAll(card => card.GetComponent<RectTransform>());
     }
 }
