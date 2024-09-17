@@ -4,7 +4,7 @@ using System.Linq;
 
 public class BlackjackGame : MonoBehaviour
 {
-    public enum CardSuit { C, D, H, S }
+    public enum CardSuit { C, D, H, P }
     public enum CardValue { A = 1, Two = 2, Three = 3, Four = 4, Five = 5, Six = 6, Seven = 7, Eight = 8, Nine = 9, Ten = 10, J = 11, Q = 12, K = 13 }
 
     public class Card
