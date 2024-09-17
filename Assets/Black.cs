@@ -1,27 +1,45 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class BlackjackGame : MonoBehaviour
 {
-    public enum CardSuit { Hearts, Diamonds, Clubs, Spades }
-    public enum CardValue { Ace = 1, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King }
+    public enum CardSuit { C, D, H, S }
+    public enum CardValue { A = 1, Two = 2, Three = 3, Four = 4, Five = 5, Six = 6, Seven = 7, Eight = 8, Nine = 9, Ten = 10, J = 11, Q = 12, K = 13 }
 
     public class Card
     {
         public CardSuit Suit { get; private set; }
         public CardValue Value { get; private set; }
+        public Sprite Sprite { get; private set; }
 
-        public Card(CardSuit suit, CardValue value)
+        public Card(CardSuit suit, CardValue value, Sprite sprite)
         {
             Suit = suit;
             Value = value;
+            Sprite = sprite;
         }
 
         public override string ToString()
         {
-            return $"{Value} of {Suit}";
+            return $"{GetValueString()}-{Suit}";
+        }
+
+        private string GetValueString()
+        {
+            switch (Value)
+            {
+                case CardValue.A: return "A";
+                case CardValue.J: return "J";
+                case CardValue.Q: return "Q";
+                case CardValue.K: return "K";
+                default: return ((int)Value).ToString();
+            }
         }
     }
+
+    private Dictionary<string, Sprite> cardSprites;
+    public Sprite cardBackSprite;
 
     private List<Card> deck;
     private List<Card> playerHand;
@@ -29,13 +47,17 @@ public class BlackjackGame : MonoBehaviour
     private string gameResult;
     private bool gameOver;
 
-    public bool StartNewGame()
+    private void Awake()
+    {
+        LoadCardSprites();
+    }
+
+        public bool StartNewGame()
     {
         InitializeGame();
         gameOver = false;
         gameResult = "";
         
-        // Check for initial blackjack
         if(CalculateHandValue(playerHand) == 21 && CalculateHandValue(dealerHand) == 21){
             gameResult = "Both players have blackjack! It's a push.";
             gameOver = true;
@@ -51,11 +73,38 @@ public class BlackjackGame : MonoBehaviour
         return gameOver;
     }
 
-    private void InitializeGame()
+        private void InitializeGame()
     {
         CreateDeck();
         ShuffleDeck();
         DealInitialCards();
+    }
+
+
+    private void LoadCardSprites()
+    {
+        cardSprites = new Dictionary<string, Sprite>();
+        Sprite[] loadedSprites = Resources.LoadAll<Sprite>("CardImages");
+        
+        foreach (Sprite sprite in loadedSprites)
+        {
+            cardSprites[sprite.name] = sprite;
+            Debug.Log($"Loaded sprite: {sprite.name}");
+        }
+
+        if (cardSprites.Count == 0)
+        {
+            Debug.LogError("No sprites were loaded. Check that your images are in Assets/Resources/CardImages and are set as Sprites in Unity.");
+        }
+
+        if (!cardSprites.ContainsKey("BACK"))
+        {
+            Debug.LogError("Card back sprite not found. Ensure you have a sprite named 'BACK' in your CardImages folder.");
+        }
+        else
+        {
+            cardBackSprite = cardSprites["BACK"];
+        }
     }
 
     private void CreateDeck()
@@ -65,10 +114,31 @@ public class BlackjackGame : MonoBehaviour
         {
             foreach (CardValue value in System.Enum.GetValues(typeof(CardValue)))
             {
-                deck.Add(new Card(suit, value));
+                string spriteName = $"{GetSpriteValueString(value)}-{suit}";
+                if (cardSprites.TryGetValue(spriteName, out Sprite sprite))
+                {
+                    deck.Add(new Card(suit, value, sprite));
+                }
+                else
+                {
+                    Debug.LogError($"Sprite not found for card: {spriteName}");
+                }
             }
         }
     }
+
+    private string GetSpriteValueString(CardValue value)
+    {
+        switch (value)
+        {
+            case CardValue.A: return "A";
+            case CardValue.J: return "J";
+            case CardValue.Q: return "Q";
+            case CardValue.K: return "K";
+            default: return ((int)value).ToString();
+        }
+    }
+
 
     private void ShuffleDeck()
     {
@@ -106,24 +176,6 @@ public class BlackjackGame : MonoBehaviour
         dealerHand.Add(DrawCard());
         playerHand.Add(DrawCard());
         dealerHand.Add(DrawCard());
-
-        playerHand.Add(new Card(CardSuit.Hearts, CardValue.Ace));
-        playerHand.Add(new Card(CardSuit.Hearts, CardValue.Ten));
-
-        Debug.Log(CalculateHandValue(playerHand));
-
-
-        if(CalculateHandValue(playerHand) == 21 && CalculateHandValue(dealerHand) == 21){
-            gameResult = "Both players have blackjack! It's a push.";
-            gameOver = true;
-        }
-        else if(CalculateHandValue(playerHand) == 21){
-            gameResult = "Player blackjack! Player wins.";
-            gameOver = true;
-        } else if(CalculateHandValue(dealerHand) == 21){
-            gameResult = "Dealer blackjack! Dealer wins.";
-            gameOver = true;
-        }
     }
 
     public void PlayerHit()
@@ -181,7 +233,6 @@ public class BlackjackGame : MonoBehaviour
             gameResult = "It's a tie!";
         }
     }
-
     private int CalculateHandValue(List<Card> hand)
     {
         int value = 0;
@@ -189,12 +240,12 @@ public class BlackjackGame : MonoBehaviour
 
         foreach (Card card in hand)
         {
-            if (card.Value == CardValue.Ace)
+            if (card.Value == CardValue.A)
             {
                 aceCount++;
                 value += 11;
             }
-            else if (card.Value >= CardValue.Jack)
+            else if (card.Value >= CardValue.J)
             {
                 value += 10;
             }
@@ -211,6 +262,22 @@ public class BlackjackGame : MonoBehaviour
         }
 
         return value;
+    }
+
+    public List<Sprite> GetPlayerHandSprites()
+    {
+        return playerHand.ConvertAll(card => card.Sprite);
+    }
+
+    public List<Sprite> GetDealerHandSprites(bool revealHidden = false)
+    {
+        if (!revealHidden && !gameOver)
+        {
+            List<Sprite> sprites = new List<Sprite> { dealerHand[0].Sprite, cardBackSprite };
+            sprites.AddRange(dealerHand.GetRange(2, dealerHand.Count - 2).ConvertAll(card => card.Sprite));
+            return sprites;
+        }
+        return dealerHand.ConvertAll(card => card.Sprite);
     }
 
     public string GetPlayerHandAsString()
@@ -230,7 +297,7 @@ public class BlackjackGame : MonoBehaviour
     private string GetHandAsString(List<Card> hand)
     {
         return string.Join(", ", hand);
-    }
+    }   
 
     public string GetGameResult()
     {

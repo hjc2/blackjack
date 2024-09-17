@@ -414,8 +414,8 @@ MonoBehaviour:
   startGameButton: {fileID: 1240206023}
   chooseCardBackButton: {fileID: 287632367}
   rulesButton: {fileID: 527640697}
-  playerHandText: {fileID: 1432771982}
-  dealerHandText: {fileID: 1789716091}
+  playerHandArea: {fileID: 2064844411}
+  dealerHandArea: {fileID: 1243375711}
   hitButton: {fileID: 27015390}
   standButton: {fileID: 311798815}
   gameResultText: {fileID: 1637284678}
@@ -427,6 +427,7 @@ MonoBehaviour:
   cardBackCloseButton: {fileID: 1246575851}
   rulesText: {fileID: 948157414}
   rulesCloseButton: {fileID: 500774957}
+  cardPrefab: {fileID: 1573770969762220117, guid: c4517bc280425fa48aef5c9042f22c5d, type: 3}
 --- !u!4 &141584100
 Transform:
   m_ObjectHideFlags: 0
@@ -454,6 +455,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d67cf86d5e39dd44834a9d618093a64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardBackSprite: {fileID: 21300000, guid: 4ead3da33706c264eaa52dcff6de6b68, type: 3}
 --- !u!1 &164572921
 GameObject:
   m_ObjectHideFlags: 0
@@ -2605,6 +2607,41 @@ MonoBehaviour:
   m_EffectColor: {r: 1, g: 1, b: 1, a: 0.5}
   m_EffectDistance: {x: 4, y: 4}
   m_UseGraphicAlpha: 1
+--- !u!1 &1243375710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1243375711}
+  m_Layer: 5
+  m_Name: dealer hand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1243375711
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1243375710}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2066058921}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 200, y: 0}
+  m_SizeDelta: {x: 400, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1246575849
 GameObject:
   m_ObjectHideFlags: 0
@@ -4411,6 +4448,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2049260038}
   m_CullTransparentMesh: 1
+--- !u!1 &2064844410
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2064844411}
+  m_Layer: 5
+  m_Name: player hand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2064844411
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2064844410}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2066058921}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -200, y: 0}
+  m_SizeDelta: {x: 400, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2066058920
 GameObject:
   m_ObjectHideFlags: 0
@@ -4447,6 +4519,8 @@ RectTransform:
   - {fileID: 1432771981}
   - {fileID: 27015389}
   - {fileID: 311798814}
+  - {fileID: 2064844411}
+  - {fileID: 1243375711}
   m_Father: {fileID: 967744377}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

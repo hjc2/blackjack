@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class BlackjackUIManager : MonoBehaviour
 {
@@ -16,8 +17,8 @@ public class BlackjackUIManager : MonoBehaviour
     public Button rulesButton;
 
     [Header("Game Panel")]
-    public TextMeshProUGUI playerHandText;
-    public TextMeshProUGUI dealerHandText;
+    public Transform playerHandArea;
+    public Transform dealerHandArea;
     public Button hitButton;
     public Button standButton;
     public TextMeshProUGUI gameResultText;
@@ -31,13 +32,24 @@ public class BlackjackUIManager : MonoBehaviour
     public TextMeshProUGUI rulesText;
     public Button rulesCloseButton;
 
+    [Header("Card Prefab")]
+    public GameObject cardPrefab;
+
     private BlackjackGame blackjackGame;
+    private List<GameObject> playerCardObjects = new List<GameObject>();
+    private List<GameObject> dealerCardObjects = new List<GameObject>();
 
     private void Start()
     {
         blackjackGame = GetComponent<BlackjackGame>();
 
-        // Set up button listeners
+        SetupButtonListeners();
+        ShowMainMenu();
+        SetupRulesText();
+    }
+
+    private void SetupButtonListeners()
+    {
         startGameButton.onClick.AddListener(StartGame);
         chooseCardBackButton.onClick.AddListener(OpenCardBackPanel);
         rulesButton.onClick.AddListener(OpenRulesPanel);
@@ -46,14 +58,18 @@ public class BlackjackUIManager : MonoBehaviour
         returnToMenuButton.onClick.AddListener(ReturnToMainMenu);
         cardBackCloseButton.onClick.AddListener(CloseCardBackPanel);
         rulesCloseButton.onClick.AddListener(CloseRulesPanel);
+    }
 
-        // Initially show only the main menu
+    private void ShowMainMenu()
+    {
         ShowPanel(mainMenuPanel);
         HidePanel(gamePanel);
         HidePanel(cardBackPanel);
         HidePanel(rulesPanel);
+    }
 
-        // Set up rules text
+    private void SetupRulesText()
+    {
         rulesText.text = "Blackjack Rules:\n\n" +
             "1. The goal is to get as close to 21 points as possible without going over.\n" +
             "2. Face cards are worth 10, Aces are 1 or 11, other cards are face value.\n" +
@@ -67,13 +83,12 @@ public class BlackjackUIManager : MonoBehaviour
     {
         ShowPanel(gamePanel);
         HidePanel(mainMenuPanel);
+        ClearCards();
         bool gameOverImmediately = blackjackGame.StartNewGame();
         UpdateGameUI();
         if (gameOverImmediately)
         {
-            // Disable hit and stand buttons
-            hitButton.interactable = false;
-            standButton.interactable = false;
+            EndGame();
         }
     }
 
@@ -81,18 +96,23 @@ public class BlackjackUIManager : MonoBehaviour
     {
         blackjackGame.PlayerHit();
         UpdateGameUI();
+        if (!blackjackGame.CanPlayerHit() && !blackjackGame.CanPlayerStand())
+        {
+            EndGame();
+        }
     }
 
     private void OnStandButtonClicked()
     {
         blackjackGame.PlayerStand();
         UpdateGameUI();
+        EndGame();
     }
 
     private void ReturnToMainMenu()
     {
-        ShowPanel(mainMenuPanel);
-        HidePanel(gamePanel);
+        ShowMainMenu();
+        ClearCards();
     }
 
     private void OpenCardBackPanel()
@@ -121,23 +141,72 @@ public class BlackjackUIManager : MonoBehaviour
 
     private void UpdateGameUI()
     {
-        playerHandText.text = "Player Hand: " + blackjackGame.GetPlayerHandAsString();
-        dealerHandText.text = "Dealer Hand: " + blackjackGame.GetDealerHandAsString();
+        UpdatePlayerHand();
+        UpdateDealerHand();
         gameResultText.text = blackjackGame.GetGameResult();
 
-        // Enable/disable hit and stand buttons based on game state
         hitButton.interactable = blackjackGame.CanPlayerHit();
         standButton.interactable = blackjackGame.CanPlayerStand();
+    }
 
-        // If the game is over, show the return to menu button
-        if (!hitButton.interactable && !standButton.interactable)
+    private void UpdatePlayerHand()
+    {
+        List<Sprite> playerSprites = blackjackGame.GetPlayerHandSprites();
+        UpdateHandDisplay(playerHandArea, playerCardObjects, playerSprites);
+    }
+
+    private void UpdateDealerHand()
+    {
+        List<Sprite> dealerSprites = blackjackGame.GetDealerHandSprites();
+        UpdateHandDisplay(dealerHandArea, dealerCardObjects, dealerSprites);
+    }
+
+    private void UpdateHandDisplay(Transform area, List<GameObject> cardObjects, List<Sprite> sprites)
+    {
+        // Remove excess card objects
+        while (cardObjects.Count > sprites.Count)
         {
-            returnToMenuButton.gameObject.SetActive(true);
+            GameObject cardToRemove = cardObjects[cardObjects.Count - 1];
+            cardObjects.RemoveAt(cardObjects.Count - 1);
+            Destroy(cardToRemove);
         }
-        else
+
+        // Update existing card objects and add new ones if needed
+        for (int i = 0; i < sprites.Count; i++)
         {
-            returnToMenuButton.gameObject.SetActive(false);
+            if (i < cardObjects.Count)
+            {
+                cardObjects[i].GetComponent<Image>().sprite = sprites[i];
+            }
+            else
+            {
+                GameObject newCard = Instantiate(cardPrefab, area);
+                newCard.GetComponent<Image>().sprite = sprites[i];
+                cardObjects.Add(newCard);
+            }
         }
+    }
+
+    private void ClearCards()
+    {
+        ClearCardObjects(playerCardObjects);
+        ClearCardObjects(dealerCardObjects);
+    }
+
+    private void ClearCardObjects(List<GameObject> cardObjects)
+    {
+        foreach (GameObject card in cardObjects)
+        {
+            Destroy(card);
+        }
+        cardObjects.Clear();
+    }
+
+    private void EndGame()
+    {
+        hitButton.interactable = false;
+        standButton.interactable = false;
+        returnToMenuButton.gameObject.SetActive(true);
     }
 
     private void ShowPanel(GameObject panel)
