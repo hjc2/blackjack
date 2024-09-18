@@ -60,7 +60,7 @@ public class BlackjackUIManager : MonoBehaviour
 
     public int playerMoney = 100;
     public TextMeshProUGUI playerMoneyText;
-    public int playerBet = 0;
+    public int playerBet = 10;
     public TextMeshProUGUI playerBetText;
     public Button betIncreaseButton;
     public Button betDecreaseButton;
@@ -142,14 +142,10 @@ public class BlackjackUIManager : MonoBehaviour
         HidePanel(mainMenuPanel);
         ClearCards();
         restartButton.interactable = true;
-        playerMoneyText.text = playerMoney.ToString();
-        playerBetText.text = playerBet.ToString();
-        // bool gameOverImmediately = blackjackGame.StartNewGame();
-        // UpdateGameUI();
-        // if (gameOverImmediately)
-        // {
-        //     EndGame();
-        // }
+        betIncreaseButton.interactable = true;
+        betDecreaseButton.interactable = true;
+
+        setTextBets();
     }
 
     private void OnHitButtonClicked()
@@ -219,7 +215,7 @@ public class BlackjackUIManager : MonoBehaviour
             }
         }
 
-        playerBetText.text = playerBet.ToString();
+        setTextBets();
         if(playerBet > playerMoney){
             playerBet = playerMoney;
             playerBetText.text = playerBet.ToString();
@@ -305,6 +301,9 @@ public class BlackjackUIManager : MonoBehaviour
         hitButton.interactable = false;
         standButton.interactable = false;
         restartButton.interactable = true;
+        betIncreaseButton.interactable = true;
+        betDecreaseButton.interactable = true;
+
         returnToMenuButton.gameObject.SetActive(true);
     }
 
@@ -331,7 +330,8 @@ public class BlackjackUIManager : MonoBehaviour
         ClearCards();
 
         restartButton.interactable = false;
-        
+        betIncreaseButton.interactable = false;
+        betDecreaseButton.interactable = false;
         ClearCards();
         bool gameOverImmediately = blackjackGame.StartNewGame();
         UpdateGameUI();
@@ -392,14 +392,19 @@ public class BlackjackUIManager : MonoBehaviour
     public void upBet(){
         if(playerBet < playerMoney){
             playerBet++;
-            playerBetText.text = playerBet.ToString();
+            setTextBets();
         }
     }
 
     public void downBet(){
-        if(playerBet > 0){
+        if(playerBet > 1){
             playerBet--;
-            playerBetText.text = playerBet.ToString();
+            setTextBets();
         }
+    }
+
+    private void setTextBets(){
+        playerMoneyText.text = "Chips: " + playerMoney.ToString();
+        playerBetText.text = "Bet: " + playerBet.ToString(); 
     }
 }
