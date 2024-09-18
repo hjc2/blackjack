@@ -64,9 +64,8 @@ public class BlackjackUIManager : MonoBehaviour
     public TextMeshProUGUI playerBetText;
     public Button betIncreaseButton;
     public Button betDecreaseButton;
+    public Button betMaxButton;
     
-
-
     private void Start()
     {
         blackjackGame = GetComponent<BlackjackGame>();
@@ -401,6 +400,11 @@ public class BlackjackUIManager : MonoBehaviour
             playerBet--;
             setTextBets();
         }
+    }
+
+    public void maxBet(){
+        playerBet = playerMoney;
+        setTextBets();
     }
 
     private void setTextBets(){
