@@ -200,6 +200,7 @@ public class BlackjackGame : MonoBehaviour
     {
         while (CalculateHandValue(dealerHand) < 17)
         {
+            
             dealerHand.Add(DrawCard());
         }
     }

@@ -62,7 +62,6 @@ public class BlackjackUIManager : MonoBehaviour
     public TextMeshProUGUI playerMoneyText;
     public int playerBet = 0;
     public TextMeshProUGUI playerBetText;
-    public Button betMaxButton;
     public Button betIncreaseButton;
     public Button betDecreaseButton;
     
@@ -358,10 +357,22 @@ public class BlackjackUIManager : MonoBehaviour
 
         yield return null;
     }
-
-
     private List<RectTransform> GetCardRectTransforms(List<GameObject> cardObjects)
     {
         return cardObjects.ConvertAll(card => card.GetComponent<RectTransform>());
+    }
+
+    public void upBet(){
+        if(playerBet < playerMoney){
+            playerBet++;
+            playerBetText.text = playerBet.ToString();
+        }
+    }
+
+    public void downBet(){
+        if(playerBet > 0){
+            playerBet--;
+            playerBetText.text = playerBet.ToString();
+        }
     }
 }
