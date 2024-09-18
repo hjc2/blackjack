@@ -141,13 +141,15 @@ public class BlackjackUIManager : MonoBehaviour
         ShowPanel(gamePanel);
         HidePanel(mainMenuPanel);
         ClearCards();
-        restartButton.interactable = false;
-        bool gameOverImmediately = blackjackGame.StartNewGame();
-        UpdateGameUI();
-        if (gameOverImmediately)
-        {
-            EndGame();
-        }
+        restartButton.interactable = true;
+        playerMoneyText.text = playerMoney.ToString();
+        playerBetText.text = playerBet.ToString();
+        // bool gameOverImmediately = blackjackGame.StartNewGame();
+        // UpdateGameUI();
+        // if (gameOverImmediately)
+        // {
+        //     EndGame();
+        // }
     }
 
     private void OnHitButtonClicked()
@@ -169,8 +171,10 @@ public class BlackjackUIManager : MonoBehaviour
 
     private void ReturnToMainMenu()
     {
+
         ShowMainMenu();
         ClearCards();
+        gameResultText.text = "";
     }
 
     private void OpenCardBackPanel()
@@ -202,6 +206,24 @@ public class BlackjackUIManager : MonoBehaviour
         UpdatePlayerHand();
         UpdateDealerHand();
         gameResultText.text = blackjackGame.GetGameResult();
+        if (blackjackGame.GetGameResult() != "")
+        {
+            if(gameResultText.text == "Player wins!" || gameResultText.text == "Dealer busts! Player wins."){
+                playerMoney += playerBet;
+            } else if(gameResultText.text == "Player busts! Dealer wins." || gameResultText.text == "Dealer wins." || gameResultText.text == "Dealer blackjack! Dealer wins."){
+                playerMoney -= playerBet;
+            } else if(gameResultText.text == "It's a tie!" || "Both players have blackjack! It's a push." == gameResultText.text){
+                ;
+            } else if(gameResultText.text == "Player blackjack! Player wins."){
+                playerMoney += playerBet * 2;
+            }
+        }
+
+        playerBetText.text = playerBet.ToString();
+        if(playerBet > playerMoney){
+            playerBet = playerMoney;
+            playerBetText.text = playerBet.ToString();
+        }
 
         hitButton.interactable = blackjackGame.CanPlayerHit();
         standButton.interactable = blackjackGame.CanPlayerStand();
@@ -326,6 +348,10 @@ public class BlackjackUIManager : MonoBehaviour
         Vector2 stackPosition = offScreenPosition;
         float elapsedTime = 0f;
 
+        if(cardObjects.Count == 0){
+            yield break;
+        } else {
+
         // Store initial positions
         Vector2[] startPositions = new Vector2[cards.Count];
         Vector2[] endPositions = new Vector2[cards.Count];
@@ -356,6 +382,7 @@ public class BlackjackUIManager : MonoBehaviour
         }
 
         yield return null;
+        }
     }
     private List<RectTransform> GetCardRectTransforms(List<GameObject> cardObjects)
     {

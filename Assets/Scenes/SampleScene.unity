@@ -877,7 +877,6 @@ MonoBehaviour:
   playerMoneyText: {fileID: 1872916620}
   playerBet: 0
   playerBetText: {fileID: 751345}
-  betMaxButton: {fileID: 0}
   betIncreaseButton: {fileID: 982766403}
   betDecreaseButton: {fileID: 460437037}
 --- !u!4 &141584100
@@ -1970,7 +1969,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 141584099}
         m_TargetAssemblyTypeName: BlackjackUIManager, Assembly-CSharp
-        m_MethodName: RestartGame
+        m_MethodName: downBet
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3277,7 +3276,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 141584099}
         m_TargetAssemblyTypeName: BlackjackUIManager, Assembly-CSharp
-        m_MethodName: RestartGame
+        m_MethodName: upBet
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5029,7 +5028,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7d6d0268bfa929c4684f939e3096605e, type: 2}
   m_sharedMaterial: {fileID: -6580833204917054835, guid: 7d6d0268bfa929c4684f939e3096605e, type: 2}
